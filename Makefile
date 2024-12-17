@@ -1,6 +1,6 @@
 PKGNAME = flat-remix
 MAINTAINER = Daniel Ruiz de Alegría <daniel@drasite.com>
-UBUNTU_RELEASE = jammy
+UBUNTU_RELEASE = focal
 PREFIX ?= /usr
 THEMES ?= $(patsubst %/index.theme,%,$(wildcard ./*/index.theme))
 COLOR_VARIANTS ?= Blue Green Red Yellow Black Brown Cyan Grey Magenta Orange Teal Violet
@@ -68,18 +68,9 @@ release: _get_version
 	git push origin --tags
 	$(MAKE) dist
 
-aur_release: _get_version
-	cd aur; \
-	sed "s/pkgver=.*/pkgver=$(VERSION)/" -i PKGBUILD; \
-	sed "s/pkgver =.*/pkgver = $(VERSION)/" -i .SRCINFO; \
-	git commit -a -m "$(VERSION)"; \
-	git push origin master;
-
-	git commit aur -m "Update aur version $(VERSION)"
-	git push origin master
 
 copr_release: _get_version
-	sed "/Version:/c Version: $(VERSION)" -i $(PKGNAME).spec
+	sed -i "/Version:/c Version: $(VERSION)" $(PKGNAME).spec
 	git commit $(PKGNAME).spec -m "Update $(PKGNAME).spec version $(VERSION)"
 	git push origin master
 
@@ -107,4 +98,3 @@ generate_changelog: _get_version _get_tag
 	git commit CHANGELOG -m "Update CHANGELOG version $(VERSION)"
 	git push origin HEAD
 
-.PHONY: all install $(THEMES) uninstall _get_version _get_tag dist release aur_release copr_release launchpad_release undo_release generate_changelog
