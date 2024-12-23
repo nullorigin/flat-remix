@@ -61,18 +61,10 @@ dist: _get_version
 
 release: _get_version
 	$(MAKE) generate_changelog VERSION=$(VERSION)
-	$(MAKE) aur_release VERSION=$(VERSION)
-	$(MAKE) copr_release VERSION=$(VERSION)
-	#$(MAKE) launchpad_release VERSION=$(VERSION)
+	$(MAKE) launchpad_release VERSION=$(VERSION)
 	git tag -f $(VERSION)
 	git push origin --tags
 	$(MAKE) dist
-
-
-copr_release: _get_version
-	sed -i "/Version:/c Version: $(VERSION)" $(PKGNAME).spec
-	git commit $(PKGNAME).spec -m "Update $(PKGNAME).spec version $(VERSION)"
-	git push origin master
 
 launchpad_release: _get_version
 	rm -rf /tmp/$(PKGNAME)
